@@ -1,0 +1,247 @@
+<Page x:Class="AjazzKeyboard.Views.RgbPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:conv="clr-namespace:AjazzKeyboard.Converters"
+      xmlns:models="clr-namespace:AjazzKeyboard.Models"
+      Title="RGB" Background="Transparent">
+
+    <Page.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolVis"/>
+        <conv:InverseBoolConverter      x:Key="InvBool"/>
+    </Page.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                <TextBlock Text="RGB Lighting" FontSize="22" FontWeight="Bold" Foreground="#CDD6F4"/>
+                <TextBlock Text="Configure lighting effects and colors."
+                           FontSize="12" Foreground="#6C7086" Margin="0,2,0,0"/>
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Effect list -->
+                <Border Grid.Column="0" Background="#1E1E2E" CornerRadius="12" Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="Effect" Foreground="#6C7086" FontSize="11"
+                                   FontWeight="SemiBold" Margin="0,0,0,12"/>
+                        <ListBox ItemsSource="{Binding AllModes}"
+                                 SelectedItem="{Binding SelectedMode}"
+                                 Background="Transparent" BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" Padding="4,6" Foreground="#CDD6F4" FontSize="13"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="Background"  Value="Transparent"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        CornerRadius="6" Margin="0,1">
+                                                    <ContentPresenter Margin="8,4"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsSelected" Value="True">
+                                                        <Setter Property="Background" Value="#313244"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#262637"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+
+                <!-- Settings panel -->
+                <StackPanel Grid.Column="2">
+
+                    <!-- Color picker card -->
+                    <Border Background="#1E1E2E" CornerRadius="12" Padding="20" Margin="0,0,0,16"
+                            IsEnabled="{Binding ColorPickerEnabled}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Opacity" Value="1"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.4"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- RGB sliders -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Color" Foreground="#6C7086" FontSize="11"
+                                           FontWeight="SemiBold" Margin="0,0,0,16"/>
+
+                                <!-- R -->
+                                <StackPanel Margin="0,0,0,12">
+                                    <Grid Margin="0,0,0,4">
+                                        <TextBlock Text="Red" Foreground="#F38BA8" FontSize="12"/>
+                                        <TextBlock Text="{Binding Red}" HorizontalAlignment="Right"
+                                                   Foreground="#CDD6F4" FontSize="12"/>
+                                    </Grid>
+                                    <Slider Value="{Binding Red}" Minimum="0" Maximum="255" TickFrequency="1"
+                                            IsSnapToTickEnabled="True">
+                                        <Slider.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#1E1E2E" Offset="0"/>
+                                                <GradientStop Color="#F38BA8" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Slider.Background>
+                                    </Slider>
+                                </StackPanel>
+
+                                <!-- G -->
+                                <StackPanel Margin="0,0,0,12">
+                                    <Grid Margin="0,0,0,4">
+                                        <TextBlock Text="Green" Foreground="#A6E3A1" FontSize="12"/>
+                                        <TextBlock Text="{Binding Green}" HorizontalAlignment="Right"
+                                                   Foreground="#CDD6F4" FontSize="12"/>
+                                    </Grid>
+                                    <Slider Value="{Binding Green}" Minimum="0" Maximum="255" TickFrequency="1"
+                                            IsSnapToTickEnabled="True">
+                                        <Slider.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#1E1E2E" Offset="0"/>
+                                                <GradientStop Color="#A6E3A1" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Slider.Background>
+                                    </Slider>
+                                </StackPanel>
+
+                                <!-- B -->
+                                <StackPanel>
+                                    <Grid Margin="0,0,0,4">
+                                        <TextBlock Text="Blue" Foreground="#89B4FA" FontSize="12"/>
+                                        <TextBlock Text="{Binding Blue}" HorizontalAlignment="Right"
+                                                   Foreground="#CDD6F4" FontSize="12"/>
+                                    </Grid>
+                                    <Slider Value="{Binding Blue}" Minimum="0" Maximum="255" TickFrequency="1"
+                                            IsSnapToTickEnabled="True">
+                                        <Slider.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#1E1E2E" Offset="0"/>
+                                                <GradientStop Color="#89B4FA" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Slider.Background>
+                                    </Slider>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Color preview + presets -->
+                            <StackPanel Grid.Column="2" Width="140">
+                                <TextBlock Text="Preview" Foreground="#6C7086" FontSize="11"
+                                           FontWeight="SemiBold" Margin="0,0,0,16"/>
+                                <Border Width="120" Height="120" CornerRadius="8"
+                                        Background="{Binding PreviewBrush}"
+                                        BorderBrush="#45475A" BorderThickness="1" Margin="0,0,0,12"/>
+
+                                <!-- Preset swatches -->
+                                <UniformGrid Columns="4" Width="120">
+                                    <Button Width="24" Height="24" Background="#F38BA8" Margin="1"
+                                            Command="{Binding SetPresetCommand}" CommandParameter="Red"
+                                            ToolTip="Red" BorderThickness="0" Cursor="Hand"/>
+                                    <Button Width="24" Height="24" Background="#A6E3A1" Margin="1"
+                                            Command="{Binding SetPresetCommand}" CommandParameter="Green"
+                                            ToolTip="Green" BorderThickness="0" Cursor="Hand"/>
+                                    <Button Width="24" Height="24" Background="#89B4FA" Margin="1"
+                                            Command="{Binding SetPresetCommand}" CommandParameter="Blue"
+                                            ToolTip="Blue" BorderThickness="0" Cursor="Hand"/>
+                                    <Button Width="24" Height="24" Background="#FFFFFF" Margin="1"
+                                            Command="{Binding SetPresetCommand}" CommandParameter="White"
+                                            ToolTip="White" BorderThickness="0" Cursor="Hand"/>
+                                    <Button Width="24" Height="24" Background="#00FFFF" Margin="1"
+                                            Command="{Binding SetPresetCommand}" CommandParameter="Cyan"
+                                            ToolTip="Cyan" BorderThickness="0" Cursor="Hand"/>
+                                    <Button Width="24" Height="24" Background="#FF00FF" Margin="1"
+                                            Command="{Binding SetPresetCommand}" CommandParameter="Magenta"
+                                            ToolTip="Magenta" BorderThickness="0" Cursor="Hand"/>
+                                    <Button Width="24" Height="24" Background="#FFFF00" Margin="1"
+                                            Command="{Binding SetPresetCommand}" CommandParameter="Yellow"
+                                            ToolTip="Yellow" BorderThickness="0" Cursor="Hand"/>
+                                    <Button Width="24" Height="24" Background="#FF8C00" Margin="1"
+                                            Command="{Binding SetPresetCommand}" CommandParameter="Orange"
+                                            ToolTip="Orange" BorderThickness="0" Cursor="Hand"/>
+                                </UniformGrid>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Speed & Brightness card -->
+                    <Border Background="#1E1E2E" CornerRadius="12" Padding="20" Margin="0,0,0,16"
+                            IsEnabled="{Binding SpeedEnabled}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Opacity" Value="1"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.4"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <TextBlock Text="Effect Settings" Foreground="#6C7086" FontSize="11"
+                                       FontWeight="SemiBold" Margin="0,0,0,16"/>
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="Speed" Foreground="#CDD6F4" FontSize="12"/>
+                                <TextBlock Text="{Binding Speed}" HorizontalAlignment="Right"
+                                           Foreground="#6C7086" FontSize="12"/>
+                            </Grid>
+                            <Slider Value="{Binding Speed}" Minimum="1" Maximum="10"
+                                    TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,0,0,16"/>
+
+                            <Grid Margin="0,0,0,12">
+                                <TextBlock Text="Brightness" Foreground="#CDD6F4" FontSize="12"/>
+                                <TextBlock Text="{Binding Brightness}" HorizontalAlignment="Right"
+                                           Foreground="#6C7086" FontSize="12"/>
+                            </Grid>
+                            <Slider Value="{Binding Brightness}" Minimum="1" Maximum="10"
+                                    TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,0,0,16"/>
+
+                            <CheckBox Content="Reverse direction" IsChecked="{Binding DirectionReversed}"
+                                      Foreground="#CDD6F4" FontSize="12"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Apply button + status -->
+                    <Grid>
+                        <ui:Button Content="Apply to Keyboard" Icon="{ui:SymbolIcon LightbulbFilament24}"
+                                   Command="{Binding ApplyCommand}"
+                                   Appearance="Primary" HorizontalAlignment="Left"
+                                   Padding="20,8" FontSize="13"/>
+                        <TextBlock Text="{Binding StatusMessage}" Foreground="#A6E3A1"
+                                   FontSize="12" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</Page>

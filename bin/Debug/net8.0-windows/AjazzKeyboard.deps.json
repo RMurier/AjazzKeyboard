@@ -1,0 +1,73 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "AjazzKeyboard/1.0.0": {
+        "dependencies": {
+          "CommunityToolkit.Mvvm": "8.3.2",
+          "hidlibrary": "3.3.37",
+          "WPF-UI": "3.0.5"
+        },
+        "runtime": {
+          "AjazzKeyboard.dll": {}
+        }
+      },
+      "CommunityToolkit.Mvvm/8.3.2": {
+        "runtime": {
+          "lib/net8.0/CommunityToolkit.Mvvm.dll": {
+            "assemblyVersion": "8.3.0.0",
+            "fileVersion": "8.3.2.1"
+          }
+        }
+      },
+      "hidlibrary/3.3.37": {
+        "runtime": {
+          "lib/netstandard2/HidLibrary.dll": {
+            "assemblyVersion": "3.2.49.0",
+            "fileVersion": "3.2.49.0"
+          }
+        }
+      },
+      "WPF-UI/3.0.5": {
+        "runtime": {
+          "lib/net8.0-windows7.0/Wpf.Ui.dll": {
+            "assemblyVersion": "3.0.5.0",
+            "fileVersion": "3.0.5.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "AjazzKeyboard/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "CommunityToolkit.Mvvm/8.3.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-m8EolE1A0Updj68WTsZSGI6VWb6mUqHPh7QFo0kt7+JPhYMNXRS1ch8TS/oITAdcxTLrwMOp3ku1KjeG1/Zdpg==",
+      "path": "communitytoolkit.mvvm/8.3.2",
+      "hashPath": "communitytoolkit.mvvm.8.3.2.nupkg.sha512"
+    },
+    "hidlibrary/3.3.37": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-JFezi7viMFjLRp5nyihoMf9sV6ohWAlTZ3pG3cVZTeg4Yrg2imvuNxbw7oy/qb7h4UQZeefm840N7O1s0bZ9wg==",
+      "path": "hidlibrary/3.3.37",
+      "hashPath": "hidlibrary.3.3.37.nupkg.sha512"
+    },
+    "WPF-UI/3.0.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-vha596eFVZ0j/zjpPrYxqaBNZzr17ROOihQ/xqgTVPMx5cmHAVKPulbaUmHKXo0QHGkqvwaPNxYH/HTS/UroTQ==",
+      "path": "wpf-ui/3.0.5",
+      "hashPath": "wpf-ui.3.0.5.nupkg.sha512"
+    }
+  }
+}

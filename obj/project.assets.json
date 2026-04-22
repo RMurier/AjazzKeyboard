@@ -1,0 +1,256 @@
+{
+  "version": 3,
+  "targets": {
+    "net8.0-windows7.0": {
+      "CommunityToolkit.Mvvm/8.3.2": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/CommunityToolkit.Mvvm.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/CommunityToolkit.Mvvm.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "build": {
+          "buildTransitive/CommunityToolkit.Mvvm.targets": {}
+        }
+      },
+      "hidlibrary/3.3.37": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2/HidLibrary.dll": {
+            "related": ".deps.json;.pdb"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2/HidLibrary.dll": {
+            "related": ".deps.json;.pdb"
+          }
+        }
+      },
+      "WPF-UI/3.0.5": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0-windows7.0/Wpf.Ui.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0-windows7.0/Wpf.Ui.dll": {
+            "related": ".pdb;.xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.WindowsDesktop.App.WPF"
+        ]
+      }
+    }
+  },
+  "libraries": {
+    "CommunityToolkit.Mvvm/8.3.2": {
+      "sha512": "m8EolE1A0Updj68WTsZSGI6VWb6mUqHPh7QFo0kt7+JPhYMNXRS1ch8TS/oITAdcxTLrwMOp3ku1KjeG1/Zdpg==",
+      "type": "package",
+      "path": "communitytoolkit.mvvm/8.3.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "License.md",
+        "ThirdPartyNotices.txt",
+        "analyzers/dotnet/roslyn4.0/cs/CommunityToolkit.Mvvm.CodeFixers.dll",
+        "analyzers/dotnet/roslyn4.0/cs/CommunityToolkit.Mvvm.SourceGenerators.dll",
+        "analyzers/dotnet/roslyn4.3/cs/CommunityToolkit.Mvvm.CodeFixers.dll",
+        "analyzers/dotnet/roslyn4.3/cs/CommunityToolkit.Mvvm.SourceGenerators.dll",
+        "build/CommunityToolkit.Mvvm.FeatureSwitches.targets",
+        "build/CommunityToolkit.Mvvm.SourceGenerators.targets",
+        "build/CommunityToolkit.Mvvm.WindowsSdk.targets",
+        "build/CommunityToolkit.Mvvm.targets",
+        "buildTransitive/CommunityToolkit.Mvvm.FeatureSwitches.targets",
+        "buildTransitive/CommunityToolkit.Mvvm.SourceGenerators.targets",
+        "buildTransitive/CommunityToolkit.Mvvm.WindowsSdk.targets",
+        "buildTransitive/CommunityToolkit.Mvvm.targets",
+        "communitytoolkit.mvvm.8.3.2.nupkg.sha512",
+        "communitytoolkit.mvvm.nuspec",
+        "lib/net6.0/CommunityToolkit.Mvvm.dll",
+        "lib/net6.0/CommunityToolkit.Mvvm.pdb",
+        "lib/net6.0/CommunityToolkit.Mvvm.xml",
+        "lib/net8.0-windows10.0.17763/CommunityToolkit.Mvvm.dll",
+        "lib/net8.0-windows10.0.17763/CommunityToolkit.Mvvm.pdb",
+        "lib/net8.0-windows10.0.17763/CommunityToolkit.Mvvm.xml",
+        "lib/net8.0/CommunityToolkit.Mvvm.dll",
+        "lib/net8.0/CommunityToolkit.Mvvm.pdb",
+        "lib/net8.0/CommunityToolkit.Mvvm.xml",
+        "lib/netstandard2.0/CommunityToolkit.Mvvm.dll",
+        "lib/netstandard2.0/CommunityToolkit.Mvvm.pdb",
+        "lib/netstandard2.0/CommunityToolkit.Mvvm.xml",
+        "lib/netstandard2.1/CommunityToolkit.Mvvm.dll",
+        "lib/netstandard2.1/CommunityToolkit.Mvvm.pdb",
+        "lib/netstandard2.1/CommunityToolkit.Mvvm.xml"
+      ]
+    },
+    "hidlibrary/3.3.37": {
+      "sha512": "JFezi7viMFjLRp5nyihoMf9sV6ohWAlTZ3pG3cVZTeg4Yrg2imvuNxbw7oy/qb7h4UQZeefm840N7O1s0bZ9wg==",
+      "type": "package",
+      "path": "hidlibrary/3.3.37",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "hidlibrary.3.3.37.nupkg.sha512",
+        "hidlibrary.nuspec",
+        "lib/net20/HidLibrary.dll",
+        "lib/net20/HidLibrary.pdb",
+        "lib/net35/HidLibrary.dll",
+        "lib/net35/HidLibrary.pdb",
+        "lib/net40/HidLibrary.dll",
+        "lib/net40/HidLibrary.pdb",
+        "lib/net45/HidLibrary.dll",
+        "lib/net45/HidLibrary.pdb",
+        "lib/netstandard2/HidLibrary.deps.json",
+        "lib/netstandard2/HidLibrary.dll",
+        "lib/netstandard2/HidLibrary.pdb"
+      ]
+    },
+    "WPF-UI/3.0.5": {
+      "sha512": "vha596eFVZ0j/zjpPrYxqaBNZzr17ROOihQ/xqgTVPMx5cmHAVKPulbaUmHKXo0QHGkqvwaPNxYH/HTS/UroTQ==",
+      "type": "package",
+      "path": "wpf-ui/3.0.5",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net462/Wpf.Ui.dll",
+        "lib/net462/Wpf.Ui.pdb",
+        "lib/net462/Wpf.Ui.xml",
+        "lib/net472/Wpf.Ui.dll",
+        "lib/net472/Wpf.Ui.pdb",
+        "lib/net472/Wpf.Ui.xml",
+        "lib/net481/Wpf.Ui.dll",
+        "lib/net481/Wpf.Ui.pdb",
+        "lib/net481/Wpf.Ui.xml",
+        "lib/net6.0-windows7.0/Wpf.Ui.dll",
+        "lib/net6.0-windows7.0/Wpf.Ui.pdb",
+        "lib/net6.0-windows7.0/Wpf.Ui.xml",
+        "lib/net7.0-windows7.0/Wpf.Ui.dll",
+        "lib/net7.0-windows7.0/Wpf.Ui.pdb",
+        "lib/net7.0-windows7.0/Wpf.Ui.xml",
+        "lib/net8.0-windows7.0/Wpf.Ui.dll",
+        "lib/net8.0-windows7.0/Wpf.Ui.pdb",
+        "lib/net8.0-windows7.0/Wpf.Ui.xml",
+        "tools/VisualStudioToolsManifest.xml",
+        "wpf-ui.3.0.5.nupkg.sha512",
+        "wpf-ui.nuspec",
+        "wpfui.png"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net8.0-windows7.0": [
+      "CommunityToolkit.Mvvm >= 8.3.2",
+      "HidLibrary >= 3.3.36",
+      "WPF-UI >= 3.0.5"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Utilisateur\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\Utilisateur\\source\\repos\\AjazzKeyboard\\AjazzKeyboard.csproj",
+      "projectName": "AjazzKeyboard",
+      "projectPath": "C:\\Users\\Utilisateur\\source\\repos\\AjazzKeyboard\\AjazzKeyboard.csproj",
+      "packagesPath": "C:\\Users\\Utilisateur\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Utilisateur\\source\\repos\\AjazzKeyboard\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\Utilisateur\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net8.0-windows"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
+      },
+      "SdkAnalysisLevel": "9.0.200"
+    },
+    "frameworks": {
+      "net8.0-windows7.0": {
+        "targetAlias": "net8.0-windows",
+        "dependencies": {
+          "CommunityToolkit.Mvvm": {
+            "target": "Package",
+            "version": "[8.3.2, )"
+          },
+          "HidLibrary": {
+            "target": "Package",
+            "version": "[3.3.36, )"
+          },
+          "WPF-UI": {
+            "target": "Package",
+            "version": "[3.0.5, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          },
+          "Microsoft.WindowsDesktop.App.WPF": {
+            "privateAssets": "none"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+      }
+    }
+  },
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "AjazzKeyboard dépend de hidlibrary (>= 3.3.36) mais hidlibrary 3.3.36 est introuvable. hidlibrary 3.3.37 a été résolu à la place.",
+      "libraryId": "hidlibrary",
+      "targetGraphs": [
+        "net8.0-windows7.0"
+      ]
+    }
+  ]
+}

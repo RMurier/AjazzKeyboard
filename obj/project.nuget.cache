@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "dgSpecHash": "Fjt8yuNad+E=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Utilisateur\\source\\repos\\AjazzKeyboard\\AjazzKeyboard.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Utilisateur\\.nuget\\packages\\communitytoolkit.mvvm\\8.3.2\\communitytoolkit.mvvm.8.3.2.nupkg.sha512",
+    "C:\\Users\\Utilisateur\\.nuget\\packages\\hidlibrary\\3.3.37\\hidlibrary.3.3.37.nupkg.sha512",
+    "C:\\Users\\Utilisateur\\.nuget\\packages\\wpf-ui\\3.0.5\\wpf-ui.3.0.5.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "AjazzKeyboard dépend de hidlibrary (>= 3.3.36) mais hidlibrary 3.3.36 est introuvable. hidlibrary 3.3.37 a été résolu à la place.",
+      "libraryId": "hidlibrary",
+      "targetGraphs": [
+        "net8.0-windows7.0"
+      ]
+    }
+  ]
+}
