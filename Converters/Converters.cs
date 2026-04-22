@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using AjazzKeyboard.Models;
 
 namespace AjazzKeyboard.Converters;
 
@@ -46,5 +47,18 @@ public class IntToDoubleConverter : IValueConverter
 public class NullToBoolConverter : IValueConverter
 {
     public object Convert(object value, Type t, object p, CultureInfo c) => value != null;
+    public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotImplementedException();
+}
+
+public class KeyActionTypeConverter : IValueConverter
+{
+    public object Convert(object value, Type t, object p, CultureInfo c) => value switch
+    {
+        KeyActionType.None      => "No action",
+        KeyActionType.Hotkey    => "Keyboard shortcut",
+        KeyActionType.LaunchApp => "Launch application",
+        KeyActionType.TextMacro => "Type text",
+        _ => value?.ToString() ?? ""
+    };
     public object ConvertBack(object v, Type t, object p, CultureInfo c) => throw new NotImplementedException();
 }

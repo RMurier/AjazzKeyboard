@@ -22,6 +22,44 @@ public partial class KeyboardPageViewModel : ObservableObject
     [ObservableProperty] private string _statusMessage = "";
     [ObservableProperty] private bool _isConnected;
 
+    // ── Action editing ───────────────────────────────────────────────────────
+
+    [ObservableProperty] private KeyActionType _editActionType = KeyActionType.None;
+    [ObservableProperty] private bool   _editCtrl;
+    [ObservableProperty] private bool   _editAlt;
+    [ObservableProperty] private bool   _editShift;
+    [ObservableProperty] private bool   _editWin;
+    [ObservableProperty] private string _editHotkeyKey  = "";
+    [ObservableProperty] private string _editAppPath    = "";
+    [ObservableProperty] private string _editMacroText  = "";
+
+    public static readonly string[] ActionTypeNames =
+        ["No action", "Keyboard shortcut", "Launch application", "Type text"];
+
+    public string EditActionTypeName
+    {
+        get => ActionTypeNames[(int)EditActionType];
+        set
+        {
+            int idx = Array.IndexOf(ActionTypeNames, value);
+            if (idx >= 0) EditActionType = (KeyActionType)idx;
+        }
+    }
+
+    public bool IsHotkeyAction => EditActionType == KeyActionType.Hotkey;
+    public bool IsAppAction    => EditActionType == KeyActionType.LaunchApp;
+    public bool IsMacroAction  => EditActionType == KeyActionType.TextMacro;
+
+    partial void OnEditActionTypeChanged(KeyActionType value)
+    {
+        OnPropertyChanged(nameof(EditActionTypeName));
+        OnPropertyChanged(nameof(IsHotkeyAction));
+        OnPropertyChanged(nameof(IsAppAction));
+        OnPropertyChanged(nameof(IsMacroAction));
+    }
+
+    // ── Constructor ──────────────────────────────────────────────────────────
+
     public KeyboardPageViewModel(HidService hid)
     {
         _hid = hid;
@@ -33,8 +71,11 @@ public partial class KeyboardPageViewModel : ObservableObject
         _hid.ButtonPressed += (_, index) =>
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (index >= 0 && index < Keys.Count)
-                    SelectKey(Keys[index]);
+                if (index < 0 || index >= Keys.Count) return;
+                var key = Keys[index];
+                SelectKey(key);
+                if (key.Action.Type != KeyActionType.None)
+                    Task.Run(() => ActionService.Execute(key.Action));
             });
 
         foreach (var key in KeyboardLayout.Build())
@@ -43,25 +84,73 @@ public partial class KeyboardPageViewModel : ObservableObject
         IsConnected = _hid.IsConnected;
     }
 
+    // ── Key selection ────────────────────────────────────────────────────────
+
     [RelayCommand]
     private void SelectKey(KeyInfo? key)
     {
         if (SelectedKey != null) SelectedKey.IsSelected = false;
         SelectedKey = key;
-        if (SelectedKey != null)
-        {
-            SelectedKey.IsSelected = true;
-            EditLabel = key!.Label;
-        }
+        if (SelectedKey == null) return;
+
+        SelectedKey.IsSelected = true;
+        EditLabel = key!.Label;
+
+        var a = key.Action;
+        EditActionType = a.Type;
+        EditCtrl       = a.Ctrl;
+        EditAlt        = a.Alt;
+        EditShift      = a.Shift;
+        EditWin        = a.Win;
+        EditHotkeyKey  = a.Key;
+        EditAppPath    = a.AppPath;
+        EditMacroText  = a.Text;
     }
+
+    // ── Label ────────────────────────────────────────────────────────────────
 
     [RelayCommand]
     private void ApplyLabel()
     {
         if (SelectedKey == null) return;
         SelectedKey.Label = EditLabel;
-        StatusMessage = $"Label updated.";
+        StatusMessage = "Label updated.";
     }
+
+    // ── Action ───────────────────────────────────────────────────────────────
+
+    [RelayCommand]
+    private void ApplyAction()
+    {
+        if (SelectedKey == null) return;
+        SelectedKey.Action = new KeyAction
+        {
+            Type    = EditActionType,
+            Ctrl    = EditCtrl,
+            Alt     = EditAlt,
+            Shift   = EditShift,
+            Win     = EditWin,
+            Key     = EditHotkeyKey.Trim(),
+            AppPath = EditAppPath.Trim(),
+            AppArgs = "",
+            Text    = EditMacroText,
+        };
+        StatusMessage = $"Action: {SelectedKey.Action.Describe()}";
+    }
+
+    [RelayCommand]
+    private void BrowseApp()
+    {
+        var dlg = new OpenFileDialog
+        {
+            Title  = "Select application",
+            Filter = "Executables|*.exe|All files|*.*",
+        };
+        if (dlg.ShowDialog() == true)
+            EditAppPath = dlg.FileName;
+    }
+
+    // ── Image ────────────────────────────────────────────────────────────────
 
     [RelayCommand]
     private void PickImage()
@@ -90,15 +179,17 @@ public partial class KeyboardPageViewModel : ObservableObject
         StatusMessage = "Key cleared.";
     }
 
+    // ── Device ───────────────────────────────────────────────────────────────
+
     [RelayCommand]
     private void ScanDevices()
     {
         var lines = HidService.GetAllDevices();
-        System.Windows.MessageBox.Show(
+        MessageBox.Show(
             string.Join(Environment.NewLine, lines),
             "Connected HID Devices",
-            System.Windows.MessageBoxButton.OK,
-            System.Windows.MessageBoxImage.Information);
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
     }
 
     [RelayCommand]
@@ -145,23 +236,29 @@ public partial class KeyboardPageViewModel : ObservableObject
     {
         foreach (var key in Keys)
         {
-            if (!profile.KeyBindings.TryGetValue(key.Id, out var value)) continue;
-            if (File.Exists(value))
-                key.ImagePath = value;
-            else
-                key.Label = value;
+            if (profile.KeyBindings.TryGetValue(key.Id, out var value))
+            {
+                if (File.Exists(value)) key.ImagePath = value;
+                else                    key.Label     = value;
+            }
+            if (profile.Actions.TryGetValue(key.Id, out var action))
+                key.Action = action;
         }
     }
 
     public void SaveToProfile(KeyboardProfile profile)
     {
         profile.KeyBindings.Clear();
+        profile.Actions.Clear();
         foreach (var key in Keys)
         {
             if (!string.IsNullOrEmpty(key.ImagePath))
                 profile.KeyBindings[key.Id] = key.ImagePath;
             else if (!string.IsNullOrEmpty(key.Label))
                 profile.KeyBindings[key.Id] = key.Label;
+
+            if (key.Action.Type != KeyActionType.None)
+                profile.Actions[key.Id] = key.Action;
         }
     }
 

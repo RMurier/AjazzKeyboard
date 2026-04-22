@@ -119,7 +119,7 @@ public sealed class HidService : IDisposable
 
         // 1. BAT — announce image upload for this key
         //    Layout: CRT 0x00 0x00  BAT  0x00 0x00  0x19 0x3F  keyIdx
-        byte[] init = Crt("BAT", 0x00, 0x00, 0x19, 0x3F, (byte)keyIndex);
+        byte[] init = Crt("BAT", 0x00, 0x00, 0x19, 0x3F, (byte)ToDeviceKeyIndex(keyIndex));
         if (!Send(init)) return false;
 
         // 2. Raw JPEG data — 512 bytes per packet, zero-padded on the last one
@@ -142,7 +142,7 @@ public sealed class HidService : IDisposable
     public bool ClearKey(int keyIndex)
     {
         if (!IsConnected) return false;
-        byte idx = keyIndex < 0 ? (byte)0xFF : (byte)keyIndex;
+        byte idx = keyIndex < 0 ? (byte)0xFF : (byte)ToDeviceKeyIndex(keyIndex);
         return Send(Crt("CLE", 0x00, 0x00, idx));
     }
 
@@ -153,12 +153,16 @@ public sealed class HidService : IDisposable
         return Send(Crt("LIG", 0x00, 0x00, percent));
     }
 
-    /// <summary>Scales a WPF BitmapSource to 85×85 and encodes it as JPEG bytes.</summary>
+    /// <summary>Scales a WPF BitmapSource to 85×85, rotates 90° CCW (LCD panels are mounted 90° CW), and encodes as JPEG.</summary>
     public static byte[] EncodeJpeg(BitmapSource source)
     {
         var visual = new DrawingVisual();
         using (var ctx = visual.RenderOpen())
+        {
+            ctx.PushTransform(new System.Windows.Media.RotateTransform(-90, ImageSize / 2.0, ImageSize / 2.0));
             ctx.DrawImage(source, new System.Windows.Rect(0, 0, ImageSize, ImageSize));
+            ctx.Pop();
+        }
 
         var rtb = new RenderTargetBitmap(ImageSize, ImageSize, 96, 96, PixelFormats.Pbgra32);
         rtb.Render(visual);
@@ -193,13 +197,21 @@ public sealed class HidService : IDisposable
 
                     // Key press events: button index at byte 9 (1-indexed, 0 = released)
                     if (report.Data.Length > 9 && report.Data[9] != 0)
-                        ButtonPressed?.Invoke(this, report.Data[9] - 1);
+                        ButtonPressed?.Invoke(this, FromDeviceKeyIndex(report.Data[9] - 1));
                 }
                 catch (OperationCanceledException) { break; }
                 catch { /* device disconnected */ }
             }
         }, token);
     }
+
+    // ── Key index mapping ────────────────────────────────────────────────────
+
+    // The device firmware numbers its rows in a different order than the software grid.
+    // Observed: SW key 8 (index 7) → device key 3 (index 2).
+    // Formula: device = (sw + 10) % 15  /  sw = (device + 5) % 15
+    private static int ToDeviceKeyIndex(int swIndex)   => (swIndex + 10) % 15;
+    private static int FromDeviceKeyIndex(int devIndex) => (devIndex + 5) % 15;
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 

@@ -4,11 +4,14 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:models="clr-namespace:AjazzKeyboard.Models"
       xmlns:conv="clr-namespace:AjazzKeyboard.Converters"
+      xmlns:vm="clr-namespace:AjazzKeyboard.ViewModels"
       Title="Keyboard" Background="Transparent">
 
     <Page.Resources>
 
-        <conv:NullToBoolConverter x:Key="NullToBool"/>
+        <conv:NullToBoolConverter     x:Key="NullToBool"/>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis"/>
+        <conv:KeyActionTypeConverter  x:Key="ActionTypeDisplay"/>
 
         <Style x:Key="LcdKeyStyle" TargetType="Button">
             <Setter Property="Background"      Value="#1E2030"/>
@@ -276,6 +279,73 @@
                                        MaxWidth="200" TextTrimming="CharacterEllipsis"
                                        Text="{Binding SelectedKey.ImagePath}"/>
                         </StackPanel>
+
+                        <Separator Margin="0,12,0,12" Background="#313244"/>
+
+                        <!-- ── Action on press ──────────────────────────── -->
+                        <TextBlock Text="Action on key press:" Foreground="#6C7086"
+                                   FontSize="11" Margin="0,0,0,6"/>
+
+                        <ComboBox ItemsSource="{x:Static vm:KeyboardPageViewModel.ActionTypeNames}"
+                                  SelectedItem="{Binding EditActionTypeName, Mode=TwoWay}"
+                                  Height="32" Background="#313244" Foreground="#CDD6F4"
+                                  BorderBrush="#45475A" Padding="8,4"/>
+
+                        <!-- Hotkey sub-panel -->
+                        <StackPanel Margin="0,8,0,0"
+                                    Visibility="{Binding IsHotkeyAction, Converter={StaticResource BoolToVis}}">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                <CheckBox Content="Ctrl"  IsChecked="{Binding EditCtrl}"
+                                          Foreground="#CDD6F4" Margin="0,0,14,0"/>
+                                <CheckBox Content="Alt"   IsChecked="{Binding EditAlt}"
+                                          Foreground="#CDD6F4" Margin="0,0,14,0"/>
+                                <CheckBox Content="Shift" IsChecked="{Binding EditShift}"
+                                          Foreground="#CDD6F4" Margin="0,0,14,0"/>
+                                <CheckBox Content="Win"   IsChecked="{Binding EditWin}"
+                                          Foreground="#CDD6F4"/>
+                            </StackPanel>
+                            <TextBox Text="{Binding EditHotkeyKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Padding="8,4" Background="#313244"
+                                     Foreground="#CDD6F4" BorderBrush="#45475A"
+                                     VerticalContentAlignment="Center"
+                                     ToolTip="F5 · Enter · A · Space · VolumeUp · MediaPlay …"/>
+                        </StackPanel>
+
+                        <!-- Launch app sub-panel -->
+                        <Grid Margin="0,8,0,0"
+                              Visibility="{Binding IsAppAction, Converter={StaticResource BoolToVis}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0"
+                                     Text="{Binding EditAppPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Height="32" Padding="8,4" Background="#313244"
+                                     Foreground="#CDD6F4" BorderBrush="#45475A"
+                                     VerticalContentAlignment="Center"
+                                     ToolTip="Full path to .exe"/>
+                            <ui:Button Grid.Column="1" Content="Browse" Margin="8,0,0,0"
+                                       Height="32" Padding="10,0" Appearance="Secondary"
+                                       Command="{Binding BrowseAppCommand}"/>
+                        </Grid>
+
+                        <!-- Type text sub-panel -->
+                        <TextBox Margin="0,8,0,0"
+                                 Text="{Binding EditMacroText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Height="32" Padding="8,4" Background="#313244"
+                                 Foreground="#CDD6F4" BorderBrush="#45475A"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Text to type when key is pressed"
+                                 Visibility="{Binding IsMacroAction, Converter={StaticResource BoolToVis}}"/>
+
+                        <ui:Button Content="Apply action" Margin="0,8,0,0" Padding="12,8"
+                                   Appearance="Secondary" HorizontalAlignment="Left"
+                                   Command="{Binding ApplyActionCommand}"/>
+
+                        <!-- Current action hint -->
+                        <TextBlock Text="{Binding SelectedKey.ActionDescription}"
+                                   Foreground="#585B70" FontSize="11" Margin="0,4,0,0"
+                                   TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
 
                     <!-- Send button -->

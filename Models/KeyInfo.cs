@@ -64,6 +64,20 @@ public class KeyInfo : INotifyPropertyChanged
         set { _isSelected = value; OnPropertyChanged(); }
     }
 
+    private KeyAction _action = new();
+    public KeyAction Action
+    {
+        get => _action;
+        set
+        {
+            _action = value ?? new KeyAction();
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ActionDescription));
+        }
+    }
+
+    public string ActionDescription => Action.Describe();
+
     // Legacy: kept for profile serialization compatibility
     public string? RemappedTo { get; set; }
     public Color   KeyColor   { get; set; } = Colors.Transparent;

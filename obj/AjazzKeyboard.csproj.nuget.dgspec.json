@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Utilisateur\\source\\repos\\AjazzKeyboard\\AjazzKeyboard.csproj": {}
+    "C:\\Users\\murie\\source\\repos\\Micro\\ajazzkeyboard\\AjazzKeyboard.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Utilisateur\\source\\repos\\AjazzKeyboard\\AjazzKeyboard.csproj": {
+    "C:\\Users\\murie\\source\\repos\\Micro\\ajazzkeyboard\\AjazzKeyboard.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Utilisateur\\source\\repos\\AjazzKeyboard\\AjazzKeyboard.csproj",
+        "projectUniqueName": "C:\\Users\\murie\\source\\repos\\Micro\\ajazzkeyboard\\AjazzKeyboard.csproj",
         "projectName": "AjazzKeyboard",
-        "projectPath": "C:\\Users\\Utilisateur\\source\\repos\\AjazzKeyboard\\AjazzKeyboard.csproj",
-        "packagesPath": "C:\\Users\\Utilisateur\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Utilisateur\\source\\repos\\AjazzKeyboard\\obj\\",
+        "projectPath": "C:\\Users\\murie\\source\\repos\\Micro\\ajazzkeyboard\\AjazzKeyboard.csproj",
+        "packagesPath": "C:\\Users\\murie\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\murie\\source\\repos\\Micro\\ajazzkeyboard\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Utilisateur\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\murie\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -45,7 +45,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.200"
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0-windows7.0": {
@@ -83,7 +83,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
