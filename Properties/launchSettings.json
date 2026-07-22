@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AjazzKeyboard": {
+      "commandName": "Project",
+      "hotReloadEnabled": false
+    }
+  }
+}

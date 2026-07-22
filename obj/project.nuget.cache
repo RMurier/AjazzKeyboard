@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "XpY5X2qrOGc=",
+  "dgSpecHash": "DelX0z1hCYo=",
   "success": true,
   "projectFilePath": "C:\\Users\\murie\\source\\repos\\Micro\\ajazzkeyboard\\AjazzKeyboard.csproj",
   "expectedPackageFiles": [
@@ -18,7 +18,7 @@
       "filePath": "C:\\Users\\murie\\source\\repos\\Micro\\ajazzkeyboard\\AjazzKeyboard.csproj",
       "libraryId": "hidlibrary",
       "targetGraphs": [
-        "net8.0-windows7.0"
+        "net8.0-windows"
       ]
     }
   ]

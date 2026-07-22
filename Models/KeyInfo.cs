@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace AjazzKeyboard.Models;
@@ -77,10 +76,6 @@ public class KeyInfo : INotifyPropertyChanged
     }
 
     public string ActionDescription => Action.Describe();
-
-    // Legacy: kept for profile serialization compatibility
-    public string? RemappedTo { get; set; }
-    public Color   KeyColor   { get; set; } = Colors.Transparent;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged([CallerMemberName] string? name = null) =>

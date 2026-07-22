@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,7 +26,7 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         var profileService = new ProfileService();
         _hid = new HidService();
 
-        var keyboardVm  = new KeyboardPageViewModel(_hid);
+        var keyboardVm  = new KeyboardPageViewModel(_hid, profileService);
         var rgbVm       = new RgbPageViewModel(_hid);
         var profilesVm  = new ProfilesPageViewModel(profileService, keyboardVm, rgbVm, _hid);
 
@@ -34,6 +35,8 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
         _profilesPage = new ProfilesPage(profilesVm);
 
         _hid.ConnectionChanged += (_, connected) =>
+        {
+            Log.Write($"MainWindow: ConnectionChanged -> {connected}");
             Dispatcher.Invoke(() =>
             {
                 ConnDot.Fill   = new SolidColorBrush(connected
@@ -41,13 +44,23 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
                     : Color.FromRgb(0xF4, 0x43, 0x36));
                 ConnLabel.Text = connected ? "Connected" : "Disconnected";
             });
-
-        Loaded += (_, _) =>
-        {
-            Navigate(_keyboardPage, BtnKeyboard);
-            _hid.TryConnect();
-            TryLoadIcon();
         };
+
+        Loaded += OnLoaded;
+    }
+
+    private bool _loadedOnce;
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        // FluentWindow can raise Loaded more than once (e.g. during backdrop/theme
+        // setup); guard so we don't auto-connect twice and open the device redundantly.
+        Log.Write($"MainWindow.OnLoaded: fired, _loadedOnce={_loadedOnce}");
+        if (_loadedOnce) return;
+        _loadedOnce = true;
+
+        Navigate(_keyboardPage, BtnKeyboard);
+        _hid.TryConnect();
+        TryLoadIcon();
     }
 
     private void NavButton_Click(object sender, RoutedEventArgs e)
@@ -88,14 +101,19 @@ public partial class MainWindow : Wpf.Ui.Controls.FluentWindow
             try
             {
                 Icon = BitmapFrame.Create(new Uri(path, UriKind.Absolute));
+                Log.Write($"TryLoadIcon: loaded '{path}'.");
             }
-            catch { /* ignore bad icon files */ }
+            catch (Exception ex)
+            {
+                Log.Write($"TryLoadIcon: failed to load '{path}': {ex.Message}");
+            }
             break;
         }
     }
 
     protected override void OnClosed(EventArgs e)
     {
+        Log.Write("MainWindow.OnClosed: disposing HidService.");
         _hid.Dispose();
         base.OnClosed(e);
     }

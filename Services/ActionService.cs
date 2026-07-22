@@ -6,68 +6,178 @@ namespace AjazzKeyboard.Services;
 
 public static class ActionService
 {
-    [DllImport("user32.dll")] private static extern void  keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
-    [DllImport("user32.dll")] private static extern short VkKeyScan(char ch);
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetForegroundWindow();
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("shell32.dll", CharSet = CharSet.Auto)]
+    private static extern IntPtr ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
+
+    private const int INPUT_KEYBOARD = 1;
     private const uint KEYEVENTF_KEYUP = 0x0002;
+    private const uint KEYEVENTF_UNICODE = 0x0004;
 
-    public static void Execute(KeyAction action)
+    [StructLayout(LayoutKind.Sequential)]
+    private struct INPUT
     {
+        public uint type;
+        public InputUnion u;
+    }
+
+    [StructLayout(LayoutKind.Explicit)]
+    private struct InputUnion
+    {
+        [FieldOffset(0)] public KEYBDINPUT ki;
+        [FieldOffset(0)] public MOUSEINPUT mi;
+        [FieldOffset(0)] public HARDWAREINPUT hi;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct KEYBDINPUT
+    {
+        public ushort wVk;
+        public ushort wScan;
+        public uint dwFlags;
+        public uint time;
+        public IntPtr dwExtraInfo;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MOUSEINPUT
+    {
+        public int dx;
+        public int dy;
+        public uint mouseData;
+        public uint dwFlags;
+        public uint time;
+        public IntPtr dwExtraInfo;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct HARDWAREINPUT
+    {
+        public uint uMsg;
+        public ushort wParamL;
+        public ushort wParamH;
+    }
+
+    public static IntPtr CaptureForeground() => GetForegroundWindow();
+
+    public static void Execute(KeyAction action, IntPtr targetWindow = default)
+    {
+        Log.Write($"Executing action: {action.Describe()} (target: {targetWindow})");
+
+        // Restore focus if needed
+        if (targetWindow != IntPtr.Zero)
+        {
+            SetForegroundWindow(targetWindow);
+            Thread.Sleep(150); // Give Windows time to switch focus
+        }
+
         switch (action.Type)
         {
-            case KeyActionType.Hotkey:    ExecuteHotkey(action);   break;
-            case KeyActionType.LaunchApp: ExecuteApp(action);      break;
-            case KeyActionType.TextMacro: ExecuteText(action);     break;
+            case KeyActionType.Hotkey:    ExecuteHotkey(action); break;
+            case KeyActionType.LaunchApp: ExecuteApp(action);    break;
+            case KeyActionType.TextMacro: ExecuteText(action);   break;
         }
     }
 
     private static void ExecuteHotkey(KeyAction a)
     {
-        if (!TryGetVk(a.Key, out byte vk)) return;
+        if (!TryGetVk(a.Key, out byte vk))
+        {
+            Log.Write($"ExecuteHotkey: unrecognized key name '{a.Key}', nothing sent.");
+            return;
+        }
 
         var mods = new List<byte>();
-        if (a.Ctrl)  mods.Add(0x11); // VK_CONTROL
-        if (a.Alt)   mods.Add(0x12); // VK_MENU
-        if (a.Shift) mods.Add(0x10); // VK_SHIFT
-        if (a.Win)   mods.Add(0x5B); // VK_LWIN
+        if (a.Ctrl)  mods.Add(0x11);
+        if (a.Alt)   mods.Add(0x12);
+        if (a.Shift) mods.Add(0x10);
+        if (a.Win)   mods.Add(0x5B);
 
-        foreach (var m in mods) keybd_event(m, 0, 0, UIntPtr.Zero);
-        keybd_event(vk, 0, 0, UIntPtr.Zero);
-        keybd_event(vk, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+        var inputs = new List<INPUT>();
+        foreach (var m in mods) inputs.Add(CreateKeyInput(m, 0));
+        inputs.Add(CreateKeyInput(vk, 0));
+        inputs.Add(CreateKeyInput(vk, KEYEVENTF_KEYUP));
         for (int i = mods.Count - 1; i >= 0; i--)
-            keybd_event(mods[i], 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+            inputs.Add(CreateKeyInput(mods[i], KEYEVENTF_KEYUP));
+
+        uint sent = SendInput((uint)inputs.Count, inputs.ToArray(), Marshal.SizeOf<INPUT>());
+        Log.Write($"Hotkey SendInput sent {sent}/{inputs.Count} inputs");
     }
 
     private static void ExecuteApp(KeyAction a)
     {
-        if (string.IsNullOrWhiteSpace(a.AppPath)) return;
+        if (string.IsNullOrWhiteSpace(a.AppPath))
+        {
+            Log.Write("ExecuteApp: AppPath is empty, nothing launched.");
+            return;
+        }
         try
         {
-            Process.Start(new ProcessStartInfo(a.AppPath)
+            Log.Write($"Launching: {a.AppPath} with args: {a.AppArgs}");
+            var psi = new ProcessStartInfo
             {
-                Arguments       = a.AppArgs,
+                FileName = a.AppPath,
+                Arguments = a.AppArgs,
                 UseShellExecute = true,
-            });
+                Verb = "open"
+            };
+            Process.Start(psi);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            Log.Write($"Launch failed: {ex.Message}. Falling back to ShellExecute.");
+            ShellExecute(IntPtr.Zero, "open", a.AppPath, a.AppArgs ?? "", null, 1);
+        }
     }
 
     private static void ExecuteText(KeyAction a)
     {
-        if (string.IsNullOrEmpty(a.Text)) return;
+        if (string.IsNullOrEmpty(a.Text))
+        {
+            Log.Write("ExecuteText: Text is empty, nothing sent.");
+            return;
+        }
+
+        var inputs = new List<INPUT>();
         foreach (char c in a.Text)
         {
-            short scan = VkKeyScan(c);
-            if (scan == -1) continue;
-            byte vk    = (byte)(scan & 0xFF);
-            bool shift = ((scan >> 8) & 1) != 0;
-            if (shift) keybd_event(0x10, 0, 0, UIntPtr.Zero);
-            keybd_event(vk, 0, 0, UIntPtr.Zero);
-            keybd_event(vk, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
-            if (shift) keybd_event(0x10, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
-            Thread.Sleep(10);
+            // For standard newlines, send Enter key
+            if (c == '\n' || c == '\r')
+            {
+                if (c == '\r' && a.Text.Contains("\r\n")) continue; // Skip \r in \r\n to avoid double enter
+                inputs.Add(CreateKeyInput(0x0D, 0));
+                inputs.Add(CreateKeyInput(0x0D, KEYEVENTF_KEYUP));
+            }
+            else
+            {
+                inputs.Add(CreateUnicodeInput(c, 0));
+                inputs.Add(CreateUnicodeInput(c, KEYEVENTF_KEYUP));
+            }
         }
+
+        uint sent = SendInput((uint)inputs.Count, inputs.ToArray(), Marshal.SizeOf<INPUT>());
+        Log.Write($"Text SendInput sent {sent}/{inputs.Count} inputs");
     }
+
+    private static INPUT CreateKeyInput(byte vk, uint flags) => new()
+    {
+        type = (uint)INPUT_KEYBOARD,
+        u = new InputUnion { ki = new KEYBDINPUT { wVk = vk, dwFlags = flags } }
+    };
+
+    private static INPUT CreateUnicodeInput(char c, uint flags) => new()
+    {
+        type = (uint)INPUT_KEYBOARD,
+        u = new InputUnion { ki = new KEYBDINPUT { wVk = 0, wScan = (ushort)c, dwFlags = flags | KEYEVENTF_UNICODE } }
+    };
 
     private static bool TryGetVk(string keyName, out byte vk)
     {

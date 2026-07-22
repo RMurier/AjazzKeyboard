@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "Bash(/mnt/c/Program Files/dotnet/dotnet.exe build *)",
+      "Bash(taskkill.exe /PID 8836 /F)",
+      "Bash(\"/mnt/c/Program Files/dotnet/dotnet.exe\" build --nologo)",
+      "Bash(\"/mnt/c/Program Files/dotnet/dotnet.exe\" run --no-build)",
+      "Bash(tasklist.exe)",
+      "Bash(dotnet --version)",
+      "Bash(curl -sL -o keypad.jpg \"https://cdn.discordapp.com/attachments/911933652248694814/1529409473674874900/IMG_20260722_104649.jpg?ex=6a61d511&is=6a608391&hm=17d9e501e18793c385cab82b62968437a4994f71d95fae7a44e70fff3f4bc4d8&\")",
+      "Bash(curl -sL -o keypad2.jpg \"https://cdn.discordapp.com/attachments/911933652248694814/1529411120518139904/IMG_20260722_105328.jpg?ex=6a61d69a&is=6a60851a&hm=4a0eea837b688395fe9b291d85be6781632b8956c6aa45696fd9d197f28d6d95&\")",
+      "Bash(curl -sL -o keypad3.jpg \"https://cdn.discordapp.com/attachments/911933652248694814/1529467213856112650/IMG_20260722_143628.jpg?ex=6a620ad7&is=6a60b957&hm=255654cd91847a19ab00ad9b3b664bc4d0b975dbd35c90aecf&\")",
+      "Bash(rm -f keypad3.jpg)",
+      "Bash(curl -sL -o keypad3.jpg \"https://cdn.discordapp.com/attachments/911933652248694814/1529467213856112650/IMG_20260722_143628.jpg?ex=6a620ad7&is=6a60b957&hm=255654cd91b82b46615a7b61847a19ab00ad9b3b664bc4d0b975dbd35c90aecf&\")",
+      "Bash(curl -sL -o keypad4.jpg \"https://cdn.discordapp.com/attachments/911933652248694814/1529481680107208714/IMG_20260722_153112.jpg?ex=6a621850&is=6a60c6d0&hm=9bce29fc07fe6551262f00264cb0f338b83e2b2199af54a600e0dcc147fb17f2&\")"
+    ]
+  }
+}

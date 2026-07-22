@@ -51,11 +51,12 @@
 
     </Page.Resources>
 
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- ── Header ───────────────────────────────────────────────────── -->
@@ -69,6 +70,8 @@
                 <TextBlock Text="AJAZZ AKP153" FontSize="20" FontWeight="Bold" Foreground="#CDD6F4"/>
                 <TextBlock Text="Click a key to configure its LCD label or image."
                            FontSize="12" Foreground="#6C7086" Margin="0,2,0,0"/>
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="12" Foreground="#A6E3A1" FontWeight="SemiBold" Margin="0,4,0,0"/>
             </StackPanel>
 
             <Border Grid.Column="1" CornerRadius="20" Padding="12,5" VerticalAlignment="Center">
@@ -111,12 +114,27 @@
                     </TextBlock>
                     <ui:Button Content="Connect" Margin="10,0,0,0" Padding="8,2" FontSize="11"
                                Appearance="Secondary" Command="{Binding TryConnectCommand}"/>
+                    <ui:Button Content="Reconnect" Margin="6,0,0,0" Padding="8,2" FontSize="11"
+                               Appearance="Secondary" Command="{Binding ForceReconnectCommand}"
+                               ToolTip="Disconnects and reconnects (no cable unplug needed) — test whether this forces the panel to redraw keys that wrote OK but never actually rendered"/>
+                    <ui:Button Content="Show grid numbers" Margin="6,0,0,0" Padding="8,2" FontSize="11"
+                               Appearance="Secondary" Command="{Binding ShowGridNumbersCommand}"
+                               ToolTip="Sends numbers 1-15 to every physical key at once (raw hardware order), so you can read the whole pad layout in one glance"/>
+                    <ui:Button Content="Probe -50..50" Margin="6,0,0,0" Padding="8,2" FontSize="11"
+                               Appearance="Secondary" Command="{Binding ProbeKeyRangeCommand}"
+                               ToolTip="Sends the raw device index (-50 to 50) to every possible slot, to find extra addressable elements like the side bar. Takes a few minutes."/>
+                    <ui:Button Content="Calibrate Grid" Margin="6,0,0,0" Padding="8,2" FontSize="11"
+                               Appearance="Secondary" Command="{Binding CalibrateGridCommand}"
+                               ToolTip="Sends a number to a physical key, then click the matching key on the pad above. Repeats for all keys and saves the mapping."/>
                     <ui:Button Content="Scan HID" Margin="6,0,0,0" Padding="8,2" FontSize="11"
                                Appearance="Secondary" Command="{Binding ScanDevicesCommand}"
                                ToolTip="List all connected HID devices (for debugging)"/>
                     <ui:Button Content="Test brightness" Margin="6,0,0,0" Padding="8,2" FontSize="11"
                                Appearance="Secondary" Command="{Binding TestBrightnessCommand}"
                                ToolTip="Send LIG command — simplest HID write test"/>
+                    <ui:Button Content="Send all" Margin="6,0,0,0" Padding="8,2" FontSize="11"
+                               Appearance="Primary" Command="{Binding SendAllToDeviceCommand}"
+                               ToolTip="Send all key images to device"/>
                 </StackPanel>
             </Border>
         </Grid>
@@ -312,22 +330,29 @@
                         </StackPanel>
 
                         <!-- Launch app sub-panel -->
-                        <Grid Margin="0,8,0,0"
-                              Visibility="{Binding IsAppAction, Converter={StaticResource BoolToVis}}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBox Grid.Column="0"
-                                     Text="{Binding EditAppPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                     Height="32" Padding="8,4" Background="#313244"
+                        <StackPanel Margin="0,8,0,0"
+                                    Visibility="{Binding IsAppAction, Converter={StaticResource BoolToVis}}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0"
+                                         Text="{Binding EditAppPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         Height="32" Padding="8,4" Background="#313244"
+                                         Foreground="#CDD6F4" BorderBrush="#45475A"
+                                         VerticalContentAlignment="Center"
+                                         ToolTip="Full path to .exe or file"/>
+                                <ui:Button Grid.Column="1" Content="Browse" Margin="8,0,0,0"
+                                           Height="32" Padding="10,0" Appearance="Secondary"
+                                           Command="{Binding BrowseAppCommand}"/>
+                            </Grid>
+                            <TextBox Text="{Binding EditAppArgs, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Margin="0,4,0,0" Height="32" Padding="8,4" Background="#313244"
                                      Foreground="#CDD6F4" BorderBrush="#45475A"
                                      VerticalContentAlignment="Center"
-                                     ToolTip="Full path to .exe"/>
-                            <ui:Button Grid.Column="1" Content="Browse" Margin="8,0,0,0"
-                                       Height="32" Padding="10,0" Appearance="Secondary"
-                                       Command="{Binding BrowseAppCommand}"/>
-                        </Grid>
+                                     ToolTip="Optional command line arguments"/>
+                        </StackPanel>
 
                         <!-- Type text sub-panel -->
                         <TextBox Margin="0,8,0,0"
@@ -341,6 +366,11 @@
                         <ui:Button Content="Apply action" Margin="0,8,0,0" Padding="12,8"
                                    Appearance="Secondary" HorizontalAlignment="Left"
                                    Command="{Binding ApplyActionCommand}"/>
+
+                        <ui:Button Content="Simulate press (2s delay)" Margin="0,4,0,0" Padding="12,8"
+                                   Appearance="Secondary" HorizontalAlignment="Left"
+                                   Command="{Binding SimulatePressCommand}"
+                                   ToolTip="Wait 2 seconds then triggers action (useful to test without the pad)"/>
 
                         <!-- Current action hint -->
                         <TextBlock Text="{Binding SelectedKey.ActionDescription}"
@@ -363,4 +393,5 @@
             </Grid>
         </Border>
     </Grid>
+    </ScrollViewer>
 </Page>
